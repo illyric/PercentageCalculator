@@ -7,6 +7,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,37 +33,61 @@ public class MainActivity extends AppCompatActivity {
 
 
         findViewById(R.id.calcBtn).setOnClickListener(view -> {
-//                    System.out.println("calc button clicked");
                     final Context ctx = getApplicationContext();
-                    final CharSequence warn;
-                    final Toast toast;
-                    Double percentage = Double.parseDouble(percentageTxtIn.getText().toString());
-                    if (percentage > 100d) {
-                        percentage = 100d;
-                        percentageTxtIn.setText(String.valueOf(100d));
-                        warn = "Percentage can not be bigger than 100!";
-                        toast = Toast.makeText(ctx, warn, Toast.LENGTH_LONG);
-                        toast.show();
-                    } else if (percentage < 0d) {
-                        percentage = 0d;
-                        percentageTxtIn.setText(String.valueOf(0d));
-                        warn = "Percentage can not be negative!";
-                        toast = Toast.makeText(ctx, warn, Toast.LENGTH_LONG);
-                        toast.show();
+                    Toast toast;
+                    CharSequence warn;
+                    Double percentage = 0d;
+
+                    if (!isValidUserInput(percentageTxtIn)) {
+                        displayToast("Please enter a valid Percentage!");
+                    } else {
+                        percentage = Double.parseDouble(percentageTxtIn.getText().toString());
+                        if (percentage > 100d) {
+                            percentage = 100d;
+                            percentageTxtIn.setText(String.valueOf(100d));
+                            warn = "Percentage can not be bigger than 100!";
+                            toast = Toast.makeText(ctx, warn, Toast.LENGTH_LONG);
+                            toast.show();
+                        } else if (percentage < 0d) {
+                            percentage = 0d;
+                            percentageTxtIn.setText(String.valueOf(0d));
+                            warn = "Percentage can not be negative!";
+                            toast = Toast.makeText(ctx, warn, Toast.LENGTH_LONG);
+                            toast.show();
+                        }
                     }
-                    Double numberToCalc = Double.parseDouble(numberToCalcTxtIn.getText().toString());
-                    Double resultUnformatted = (percentage / 100) * numberToCalc;
-                    BigDecimal finalResult = new BigDecimal(resultUnformatted).setScale(2, RoundingMode.HALF_EVEN);
-                    totalTxtView.setText(String.valueOf(finalResult));
+
+                    if (!isValidUserInput(numberToCalcTxtIn)) {
+                        displayToast("Please enter a valid number to calculate!");
+                    } else {
+                        Double numberToCalc = Double.parseDouble(numberToCalcTxtIn.getText().toString());
+                        Double resultUnformatted = (percentage / 100) * numberToCalc;
+                        BigDecimal finalResult = new BigDecimal(resultUnformatted).setScale(2, RoundingMode.HALF_EVEN);
+                        totalTxtView.setText(String.valueOf(finalResult));
+                        scrollToTop();
+                    }
                 }
         );
 
         findViewById(R.id.clearBtn).setOnClickListener(view -> {
-            System.out.println("clear button clicked!");
             percentageTxtIn.setText("");
             numberToCalcTxtIn.setText("");
             totalTxtView.setText("0");
+            scrollToTop();
         });
+    }
+
+    private void displayToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    public boolean isValidUserInput(EditText et) {
+        return et.getText().toString().isEmpty();
+    }
+
+    public void scrollToTop() {
+        ScrollView sv = findViewById(R.id.scrollView);
+        sv.fullScroll(ScrollView.FOCUS_UP);
     }
 
     @Override
