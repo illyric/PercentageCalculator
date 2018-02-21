@@ -1,6 +1,5 @@
 package com.ilirkosumi.percentcalculator;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -33,32 +32,27 @@ public class MainActivity extends AppCompatActivity {
 
 
         findViewById(R.id.calcBtn).setOnClickListener(view -> {
-                    final Context ctx = getApplicationContext();
-                    Toast toast;
-                    CharSequence warn;
-                    Double percentage = 0d;
+                    Double percentage;
 
                     if (!isValidUserInput(percentageTxtIn)) {
                         displayToast("Please enter a valid Percentage!");
+                        return;
                     } else {
                         percentage = Double.parseDouble(percentageTxtIn.getText().toString());
                         if (percentage > 100d) {
                             percentage = 100d;
                             percentageTxtIn.setText(String.valueOf(100d));
-                            warn = "Percentage can not be bigger than 100!";
-                            toast = Toast.makeText(ctx, warn, Toast.LENGTH_LONG);
-                            toast.show();
+                            displayToast("Percentage can not be bigger than 100!");
                         } else if (percentage < 0d) {
                             percentage = 0d;
                             percentageTxtIn.setText(String.valueOf(0d));
-                            warn = "Percentage can not be negative!";
-                            toast = Toast.makeText(ctx, warn, Toast.LENGTH_LONG);
-                            toast.show();
+                            displayToast("Percentage can not be negative!");
                         }
                     }
 
                     if (!isValidUserInput(numberToCalcTxtIn)) {
                         displayToast("Please enter a valid number to calculate!");
+                        return;
                     } else {
                         Double numberToCalc = Double.parseDouble(numberToCalcTxtIn.getText().toString());
                         Double resultUnformatted = (percentage / 100) * numberToCalc;
@@ -78,11 +72,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void displayToast(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     public boolean isValidUserInput(EditText et) {
-        return et.getText().toString().isEmpty();
+        return !et.getText().toString().isEmpty();
     }
 
     public void scrollToTop() {
